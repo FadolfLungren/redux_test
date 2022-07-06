@@ -1,17 +1,39 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
+import {applyMiddleware, combineReducers, createStore} from "redux";
+import {Provider} from "react-redux";
+//import {appReducer} from "./app-reducer";
+import {composeWithDevTools} from "redux-devtools-extension";
+import thunk from "redux-thunk"
+import {configureStore} from "@reduxjs/toolkit";
+
+const defaultState = {
+    cash:5,
+    message:'your mom is gay'
+}
+
+const appReducer = (state = defaultState, action) =>{
+    switch(action.type){
+        case "ADD":
+            return {...state, cash: state.cash + action.payload}
+        case "GET":
+            return {...state, cash: state.cash - action.payload}
+        default:
+            return state
+    }
+}
+const rootReducer = combineReducers({
+    app:appReducer
+})
+
+const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)))
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
-  <React.StrictMode>
+<Provider store={store}>
     <App />
-  </React.StrictMode>
+</Provider>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
